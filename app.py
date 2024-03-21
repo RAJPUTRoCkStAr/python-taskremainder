@@ -8,8 +8,8 @@ class TaskManager:
     def __init__(self):
         self.tasks = []
 
-    def add_task(self, title, date, time, category):
-        self.tasks.append({"title": title, "date": date, "time": time, "category": category})
+    def add_task(self, title,desc ,date, time, category):
+        self.tasks.append({"title": title, "description":desc,"date": date, "time": time, "category": category})
 
     def delete_task(self, index):
         del self.tasks[index]
@@ -22,6 +22,7 @@ class TaskManager:
 
 def set_notification():
     title = title_entry.get()
+    desc = desc_entry.get()
     date = date_combobox.get()
     time = time_combobox.get()
     category = category_combobox.get()
@@ -53,8 +54,8 @@ def set_notification():
     if time_diff.total_seconds() <= 0:
         notification.notify(title="Error", message="Please select a future date and time.")
     else:
-        root.after(int(time_diff.total_seconds() * 1000), lambda: notification.notify(title=title, message="It's time for your task: " + title))
-        task_manager.add_task(title, date, time, category)
+        root.after(int(time_diff.total_seconds() * 1000), lambda: notification.notify(title=title, message=desc))
+        task_manager.add_task(title,desc ,date, time, category)
         update_task_listbox()
 
 def delete_task():
@@ -72,59 +73,66 @@ def clear_tasks():
 def update_task_listbox():
     task_listbox.delete(0, tk.END)
     for idx, task in enumerate(task_manager.get_tasks(), start=1):
-        task_listbox.insert(tk.END, f"{idx}. {task['time']} - {task['title']} - {task['category']}")
+        task_listbox.insert(tk.END, f"{idx} -- {task['time']} -- {task['title']}-- {task['desc']} -- {task['category']}")
 
 # Create tkinter window with ttkbootstrap style
 root = tk.Tk()
 root.title("Task Manager")
-style = Style(theme='flatly')
+icon_path = "./paper.png"
+
+# Use the iconbitmap method to set the icon
+root.iconbitmap(icon_path)
+style = Style(theme='cyborg')
 
 task_manager = TaskManager()
 
-# Title label
-ttk.Label(root, text="Add Your Task", style="primary.TLabel").grid(row=0, column=0, columnspan=2, padx=5, pady=5)
 
-# Title entry
-ttk.Label(root, text="Title:", style="primary.TLabel").grid(row=1, column=0, padx=5, pady=5, sticky="w")
-title_entry = ttk.Entry(root, width=30)
+ttk.Label(root, text="Add Your Task", style="light.TLabel",font=("Arial",16)).grid(row=0, column=0, columnspan=2, padx=5, pady=5)
+
+
+ttk.Label(root, text="Title:", style="warning.TLabel",font=("arial",10)).grid(row=1, column=0, padx=5, pady=5, sticky="w")
+title_entry = ttk.Entry(root, width=50)
 title_entry.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
-# Date selection
-ttk.Label(root, text="Date:", style="primary.TLabel").grid(row=2, column=0, padx=5, pady=5, sticky="w")
-date_combobox = ttk.Combobox(root, width=15, values=[""])
-date_combobox.grid(row=2, column=1, padx=5, pady=5, sticky="w")
+ttk.Label(root, text="Detail :", style="warning.TLabel",font=("arial",10)).grid(row=2, column=0, padx=5, pady=5, sticky="w")
+desc_entry = ttk.Entry(root, width=50)
+desc_entry.grid(row=2, column=1, padx=5, pady=5, sticky="w")
 
-# Time selection
-ttk.Label(root, text="Time:", style="primary.TLabel").grid(row=3, column=0, padx=5, pady=5, sticky="w")
-time_combobox = ttk.Combobox(root, width=10, values=[""])
-time_combobox.grid(row=3, column=1, padx=5, pady=5, sticky="w")
 
-# Category selection
-ttk.Label(root, text="Category:", style="primary.TLabel").grid(row=4, column=0, padx=5, pady=5, sticky="w")
-category_combobox = ttk.Combobox(root, width=15, values=["Office Work", "Project", "Study", "Other"])
-category_combobox.grid(row=4, column=1, padx=5, pady=5, sticky="w")
+ttk.Label(root, text="Date:", style="warning.TLabel",font=("arial",10)).grid(row=3, column=0, padx=5, pady=5, sticky="w")
+date_combobox = ttk.Combobox(root, width=30, values=[""])
+date_combobox.grid(row=3, column=1, padx=5, pady=5, sticky="w")
 
-# Populate date dropdown with dates for the next 7 days
+
+ttk.Label(root, text="Time:", style="warning.TLabel",font=("arial",10)).grid(row=4, column=0, padx=5, pady=5, sticky="w")
+time_combobox = ttk.Combobox(root, width=30, values=[""])
+time_combobox.grid(row=4, column=1, padx=5, pady=5, sticky="w")
+
+
+ttk.Label(root, text="Category:", style="warning.TLabel",font=("arial",10)).grid(row=5, column=0, padx=5, pady=5, sticky="w")
+category_combobox = ttk.Combobox(root, width=26,font=("arial",10), values=["Office Work","Project", "Study","Class Work","Important","Eat","Other"])
+category_combobox.grid(row=5, column=1, padx=5, pady=5, sticky="w")
+
+
 date_combobox["values"] = [(datetime.datetime.now() + datetime.timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)]
 
-# Populate time dropdown with hourly intervals
+
 time_combobox["values"] = [f"{hour:02d}:00" for hour in range(24)]
 set_notification_btn = ttk.Button(root, text="Set Notification", style="success.TButton", command=set_notification)
-set_notification_btn.grid(row=5, column=0, columnspan=2, padx=5, pady=5)
+set_notification_btn.grid(row=6, column=0, columnspan=2, padx=5, pady=5)
 
-# Button to delete task
+
 delete_task_btn = ttk.Button(root, text="Delete Task", style="danger.TButton", command=delete_task)
-delete_task_btn.grid(row=6, column=0, columnspan=2, padx=5, pady=5)
+delete_task_btn.grid(row=7, column=0, columnspan=2, padx=5, pady=5)
 
-# Button to clear tasks
 clear_tasks_btn = ttk.Button(root, text="Clear All Tasks", style="warning.TButton", command=clear_tasks)
-clear_tasks_btn.grid(row=7, column=0, columnspan=2, padx=5, pady=5)
+clear_tasks_btn.grid(row=8, column=0, columnspan=2, padx=5, pady=5)
 
-# Title for showing tasks
-ttk.Label(root, text="Task List", style="success.TLabel").grid(row=0, column=2, padx=5, pady=5, sticky="w")
 
-# Listbox to display tasks
-task_listbox = tk.Listbox(root, width=60, bg="#f0f0f0", selectbackground="#add8e6")
+ttk.Label(root, text="Task List", style="success.TLabel",font=("arial",16)).grid(row=0, column=2, padx=5, pady=5, sticky="w")
+
+
+task_listbox = tk.Listbox(root, width=80, bg="#f0f0f0", selectbackground="#add8e6")
 task_listbox.grid(row=1, column=2, rowspan=7, padx=5, pady=5, sticky="nsew")
 
 update_task_listbox()
