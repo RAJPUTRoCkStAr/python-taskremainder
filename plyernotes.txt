@@ -1,0 +1,42 @@
+pip install plyer
+this module is very useful for sending notification to Windows,android and ios user user can use it get custom notification and below are somecode user can try to use it like he wants 
+
+this is for something like notification
+from plyer import notification
+
+def custom_callback_function():
+    print("Notification clicked!")
+
+# Send a customized notification
+notification.notify(
+    title='Remainder ',
+    message='This is to remind you that you are going good',
+    app_name='MyApp',
+    timeout=5,  # Notification will disappear after 5 seconds
+)
+
+This is for custom time notification like if you want to notification after sometime
+
+from plyer import notification
+import time
+
+def send_notification():
+    notification.notify(
+        title='Remainder',
+        message='This is to notify you that you have received a notification',
+        app_name='MyApp',
+        timeout=5,  # Notification will disappear after 5 seconds
+        # Add any other customization you need
+    )
+
+# Set the interval (in seconds)
+interval = 10
+
+# Infinite loop to send notifications at the specified interval
+while True:
+    send_notification()
+    time.sleep(interval)
+
+
+
+sceddule library is there 
